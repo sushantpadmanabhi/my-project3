@@ -1,6 +1,5 @@
-from flask import Flask, send_from_directory
-from flask import pyodbc
-from flask import request, jsonify
+from flask import Flask, send_from_directory, request, jsonify
+import pyodbc
 
 # Azure SQL Database connection details
 server = 'npl-project3-sqlserver.database.windows.net'
@@ -11,18 +10,20 @@ driver = '{ODBC Driver 17 for SQL Server}'
 
 app = Flask(__name__)
 
+# Homepage route
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
 
+# Update Inventory Page
 @app.route('/update-inventory')
 def update_inventory():
     return send_from_directory('.', 'update-inventory.html')
 
+# Check Inventory Page
 @app.route('/check-inventory')
 def check_inventory():
     return send_from_directory('.', 'check-inventory.html')
-
 
 # Function to establish a database connection
 def get_db_connection():
@@ -31,8 +32,7 @@ def get_db_connection():
     )
     return connection
 
-from flask import request, jsonify
-
+# API to handle inventory updates
 @app.route('/api/update-inventory', methods=['POST'])
 def api_update_inventory():
     try:
@@ -62,13 +62,14 @@ def api_update_inventory():
             )
 
         connection.commit()
-        connection.close()
-
         return jsonify({'message': 'Inventory updated successfully!'}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+    finally:
+        connection.close()
 
+# Run the app
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)
