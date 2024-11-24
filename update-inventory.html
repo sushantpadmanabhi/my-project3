@@ -83,35 +83,49 @@
     <a href="/" class="button">Go Back to Homepage</a>
 
 
-    <script>
+<script>
     async function submitInventory(event) {
-        event.preventDefault();
+        event.preventDefault(); // Prevent form submission
+
+        // Collect data from form fields
+        const productName = document.getElementById('productName').value;
+        const receivedQuantity = parseInt(document.getElementById('receivedQuantity').value);
+
+        // Example: Collect allocations dynamically
+        const allocations = [];
+        const storeRows = document.querySelectorAll('.store-allocation');
+        storeRows.forEach(row => {
+            const storeId = parseInt(row.querySelector('input[name="storeId"]').value);
+            const allocatedQuantity = parseInt(row.querySelector('input[name="allocatedQuantity"]').value);
+            allocations.push({ storeId, allocatedQuantity });
+        });
 
         const data = {
-            productName: document.getElementById('productName').value,
-            receivedQuantity: parseInt(document.getElementById('receivedQuantity').value),
-            allocations: [
-                {
-                    storeId: 1,  // Replace this with a dynamic store ID
-                    allocatedQuantity: 50  // Replace with dynamic allocated quantity
-                },
-                {
-                    storeId: 2,
-                    allocatedQuantity: 50
-                }
-            ]
+            productName: productName,
+            receivedQuantity: receivedQuantity,
+            allocations: allocations
         };
 
+        // Send the data to the backend API
         const response = await fetch('/api/update-inventory', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json'
+            },
             body: JSON.stringify(data)
         });
 
         const result = await response.json();
-        alert(result.message || result.error);
+
+        // Show success or error message
+        if (response.ok) {
+            alert(result.message || 'Inventory updated successfully!');
+        } else {
+            alert(`Error: ${result.error}`);
+        }
     }
 </script>
+
 
 </body>
 </html>
