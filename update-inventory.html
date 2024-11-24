@@ -84,27 +84,34 @@
 
 
     <script>
-        function addStore() {
-            const storeAllocations = document.getElementById("storeAllocations");
-            const div = document.createElement("div");
-            div.classList.add("store-allocation");
+    async function submitInventory(event) {
+        event.preventDefault();
 
-            div.innerHTML = `
-                <label for="store">Store Name:</label>
-                <input type="text" name="storeName[]" placeholder="Enter Store Name" required>
+        const data = {
+            productName: document.getElementById('productName').value,
+            receivedQuantity: parseInt(document.getElementById('receivedQuantity').value),
+            allocations: [
+                {
+                    storeId: 1,  // Replace this with a dynamic store ID
+                    allocatedQuantity: 50  // Replace with dynamic allocated quantity
+                },
+                {
+                    storeId: 2,
+                    allocatedQuantity: 50
+                }
+            ]
+        };
 
-                <label for="storeQuantity">Allocated Quantity:</label>
-                <input type="number" name="storeQuantity[]" placeholder="Enter Allocated Quantity" required>
-            `;
-
-            storeAllocations.appendChild(div);
-        }
-
-        document.getElementById("updateInventoryForm").addEventListener("submit", function (event) {
-            event.preventDefault();
-            alert("Inventory updated successfully!");
-            // Add logic to submit data to the backend via API
+        const response = await fetch('/api/update-inventory', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
         });
-    </script>
+
+        const result = await response.json();
+        alert(result.message || result.error);
+    }
+</script>
+
 </body>
 </html>
