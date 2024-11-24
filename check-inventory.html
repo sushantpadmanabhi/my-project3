@@ -61,4 +61,36 @@
         <button type="button" onclick="checkByProduct()">Check Inventory by Product</button>
     </form>
 
-    <div id="results" style="max-width: 600px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0,
+    <div id="results" style="max-width: 600px; margin: 20px auto; padding: 20px; background: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);"></div>
+
+    <a href="index.html" class="button">Go Back to Homepage</a>
+
+    <script>
+        function checkByStore() {
+            const storeId = document.getElementById("storeId").value;
+            if (storeId) {
+                // Placeholder logic; replace with an API call
+                document.getElementById("results").innerHTML = `
+                    <h3>Results for Store ID: ${storeId}</h3>
+                    <p>Fetching data from backend...</p>
+                `;
+            } else {
+                alert("Please enter a Store ID.");
+            }
+        }
+
+        function checkByProduct() {
+            const productId = document.getElementById("productId").value;
+            if (productId) {
+                // Placeholder logic; replace with an API call
+                document.getElementById("results").innerHTML = `
+                    <h3>Results for Product ID: ${productId}</h3>
+                    <p>Fetching data from backend...</p>
+                `;
+            } else {
+                alert("Please enter a Product ID.");
+            }
+        }
+    </script>
+</body>
+</html>
