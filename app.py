@@ -32,7 +32,7 @@ def get_db_connection():
     )
     return connection
 
-# API to handle inventory updates
+
 @app.route('/api/update-inventory', methods=['POST'])
 def api_update_inventory():
     try:
@@ -65,10 +65,12 @@ def api_update_inventory():
         return jsonify({'message': 'Inventory updated successfully!'}), 200
 
     except Exception as e:
+        print(f"Error: {e}")
         return jsonify({'error': str(e)}), 500
 
     finally:
         connection.close()
+
 
 # Run the app
 if __name__ == '__main__':
