@@ -27,10 +27,26 @@ def check_inventory():
 
 # Function to establish a database connection
 def get_db_connection():
-    connection = pyodbc.connect(
-        f'DRIVER={driver};SERVER={server};PORT=1433;DATABASE={database};UID={username};PWD={password}'
-    )
-    return connection
+    try:
+        connection = pyodbc.connect(
+            f'DRIVER={driver};SERVER={server};PORT=1433;DATABASE={database};UID={username};PWD={password}'
+        )
+        print("Database connection established successfully.")
+        return connection
+    except Exception as e:
+        print(f"Database connection failed: {e}")
+        raise
+
+@app.route('/test-connection', methods=['GET'])
+def test_connection():
+    try:
+        connection = get_db_connection()
+        cursor = connection.cursor()
+        cursor.execute("SELECT TOP 1 * FROM Products")  # Adjust table name as needed
+        result = cursor.fetchall()
+        return jsonify({'status': 'Connection successful', 'result': [dict(zip([column[0] for column in cursor.description], row)) for row in result]})
+    except Exception as e:
+        return jsonify({'status': 'Connection failed', 'error': str(e)})
 
 
 @app.route('/api/update-inventory', methods=['POST'])
@@ -62,6 +78,7 @@ def api_update_inventory():
             )
 
         connection.commit()
+        data = request.json
         return jsonify({'message': 'Inventory updated successfully!'}), 200
 
     except Exception as e:
