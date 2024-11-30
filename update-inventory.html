@@ -57,7 +57,7 @@
 </head>
 <body>
     <h1>Update Inventory</h1>
-    <form id="updateInventoryForm">
+    <form id="updateInventoryForm" onsubmit="submitInventory(event)">
         <label for="productId">Product ID:</label>
         <input type="text" id="productId" name="productId" placeholder="Enter Product ID" required>
 
@@ -69,7 +69,7 @@
 
         <div id="storeAllocations">
             <div class="store-allocation">
-                <label for="store1">Store Name:</label>
+                <label for="store1">Store ID:</label>
                 <input type="text" id="store1" name="storeName[]" placeholder="Enter Store Name" required>
 
                 <label for="storeQuantity1">Allocated Quantity:</label>
@@ -84,46 +84,65 @@
 
 
 <script>
-    async function submitInventory(event) {
-        event.preventDefault(); // Prevent form submission
 
-        // Collect data from form fields
-        const productName = document.getElementById('productName').value;
-        const receivedQuantity = parseInt(document.getElementById('receivedQuantity').value);
+    function addStore()
+    {
+        const storeAllocations = document.getElementById('storeAllocations');
+        const div = document.createElement('div');
+        div.classList.add('store-allocation');
 
-        // Example: Collect allocations dynamically
-        const allocations = [];
-        const storeRows = document.querySelectorAll('.store-allocation');
-        storeRows.forEach(row => {
-            const storeId = parseInt(row.querySelector('input[name="storeId"]').value);
-            const allocatedQuantity = parseInt(row.querySelector('input[name="allocatedQuantity"]').value);
-            allocations.push({ storeId, allocatedQuantity });
-        });
+        div.innerHTML = `
+            <label for="storeId">Store ID:</label>
+            <input type="text" name="storeId" placeholder="Enter Store ID" required>
 
-        const data = {
-            productName: productName,
-            receivedQuantity: receivedQuantity,
-            allocations: allocations
-        };
+            <label for="allocatedQuantity">Allocated Quantity:</label>
+            <input type="number" name="allocatedQuantity" placeholder="Enter Allocated Quantity" required>
+        `;
 
-        // Send the data to the backend API
-        const response = await fetch('/api/update-inventory', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        const result = await response.json();
-
-        // Show success or error message
-        if (response.ok) {
-            alert(result.message || 'Inventory updated successfully!');
-        } else {
-            alert(`Error: ${result.error}`);
-        }
+        storeAllocations.appendChild(div);
     }
+    
+    async function submitInventory(event) {
+    event.preventDefault(); // Prevent form submission
+
+    // Collect data from form fields
+    const productName = document.getElementById('productName').value;
+    const receivedQuantity = parseInt(document.getElementById('receivedQuantity').value);
+
+    // Collect allocations dynamically
+    const allocations = [];
+    const storeRows = document.querySelectorAll('.store-allocation');
+    storeRows.forEach(row => {
+        const storeId = row.querySelector('input[name="storeId"]').value;
+        const allocatedQuantity = parseInt(row.querySelector('input[name="allocatedQuantity"]').value);
+        allocations.push({ storeId, allocatedQuantity });
+    });
+
+    const data = {
+        productName: productName,
+        receivedQuantity: receivedQuantity,
+        allocations: allocations
+    };
+
+    // Send the data to the backend API
+    const response = await fetch('/api/update-inventory', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    // Show success or error message
+    if (response.ok) {
+        alert(result.message || 'Inventory updated successfully!');
+    } else {
+        alert(`Error: ${result.error}`);
+    }
+}
+
 </script>
 
 
